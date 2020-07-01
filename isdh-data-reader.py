@@ -22,14 +22,14 @@ date = 'June 30'
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #set up age-group csv file by creating it and naming first row
-ageFile = open('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + ageFilename + '.csv', 'a', newline='\n')
+ageFile = open(yourDirectory + ageFilename + '.csv', 'a', newline='\n')
 ageWriter = csv.writer(ageFile)  
 #write column headings          
 ageWriter.writerow(['namelsad', 'age_group', 'covid_count'])
 ageFile.close()
 
 #set up county-count csv file by creating it and naming first row
-historicalFile = open('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + histFilename + '.csv', 'a', newline='\n')
+historicalFile = open(yourDirectory + histFilename + '.csv', 'a', newline='\n')
 historicalWriter = csv.writer(historicalFile)
 #write column headings
 historicalWriter.writerow(['namelsad10', 'report_date', 'covid_test', 'covid_deaths', 'covid_count_cumsum', 'covid_deaths_cumsum', 'covid_test_cumsum'])
@@ -59,7 +59,7 @@ for key, value in data.items():
             covid_deaths_cumsum = indiv_county['COVID_DEATHS_CUMSUM']
             covid_test_cumsum = indiv_county['COVID_TEST_CUMSUM']
             
-            historicalFile = open('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + histFilename + '.csv', 'a', newline='\n')
+            historicalFile = open(yourDirectory + histFilename + '.csv', 'a', newline='\n')
             historicalWriter = csv.writer(historicalFile)
             historicalWriter.writerow([county_name, reported_date, covid_test, covid_deaths, covid_count_cumsum, covid_deaths_cumsum, covid_test_cumsum])
             historicalFile.close()
@@ -71,35 +71,35 @@ for key, value in data.items():
             age_grp = indiv_county['AGEGRP']
             covid_count = indiv_county['COVID_COUNT']
             
-            ageFile = open('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + ageFilename + '.csv', 'a', newline='\n')
+            ageFile = open(yourDirectory + ageFilename + '.csv', 'a', newline='\n')
             ageWriter = csv.writer(ageFile)            
             ageWriter.writerow([county_name, age_grp, covid_count])
             ageFile.close()
             
 #Now, filtering to include only rows from last date, then removing duplicates
-big_df = pd.read_csv('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + histFilename + '.csv')
+big_df = pd.read_csv(yourDirectory + histFilename + '.csv')
 latest_day = big_df[big_df['report_date']==last_date]
 latest_day = latest_day.drop_duplicates()
-latest_day.to_excel('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + last_date + '.xlsx', index=False)
+latest_day.to_excel(yourDirectory + last_date + '.xlsx', index=False)
 
-age_df = pd.read_csv('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + ageFilename + '.csv')
+age_df = pd.read_csv(yourDirectory + ageFilename + '.csv')
 age_df = age_df.drop_duplicates()
-age_df.to_excel('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\' + ageFilename + '.xlsx', index=False)
+age_df.to_excel(yourDirectory + ageFilename + '.xlsx', index=False)
 
 #buncha code to update Google Sheets, which in turn powers the CARTO map
 scope = [
   'https://www.googleapis.com/auth/spreadsheets',
   'https://www.googleapis.com/auth/drive'
 ]
-creds = ServiceAccountCredentials.from_json_keyfile_name('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\py\\My First Project-168879277585.json', scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(insert-your-gspread-creds-here, scope)
 client = gspread.authorize(creds)
 
 #Write to county count Google Sheet
-date_sheet = client.open('Indiana COVID-19 Cases').sheet1
+date_sheet = client.open(XXX).sheet1
 date_sheet.update([latest_day.columns.values.tolist()] + latest_day.values.tolist())
 
 #Write to age groups Google Sheet
-age_sheet = client.open('COVID-19 Age Groups').sheet1
+age_sheet = client.open(XXX).sheet1
 age_sheet.update([age_df.columns.values.tolist()] + age_df.values.tolist())
 
 #toaster simply sends a Windows notification
@@ -108,7 +108,7 @@ toaster.show_toast("And we done!", "Python has finished scraping coronavirus dat
 #=========================================================================
 
 #Open county count dataset on CARTO
-webbrowser.open('https://vivrao9.carto.com/dataset/indiana_covid19_cases')
+webbrowser.open(XXX)
 time.sleep(10)
 #Click on the "Sync Now" button to update dataset as on CARTO
 pyautogui.click(440, 277)
@@ -118,7 +118,7 @@ pyautogui.click(440, 277)
 time.sleep(10)
 
 #Open age group dataset on CARTO
-webbrowser.open('https://vivrao9.carto.com/dataset/covid19_age_groups')
+webbrowser.open(XXX)
 time.sleep(10)
 #Click on the "Sync Now" button to update dataset as on CARTO
 pyautogui.click(440, 277)
@@ -129,17 +129,17 @@ time.sleep(7)
 #==========================================================================
 
 #CARTO link for the main map
-webbrowser.open('https://vivrao9.carto.com/builder/0884f936-c996-4b24-b5eb-27f1665f82b7')
+webbrowser.open(XXX)
 
 #Factoring in slow webpages, lagging, loading
 time.sleep(10)
 
 #take a screenshot of the above page
 myScreenshot = pyautogui.screenshot()
-myScreenshot.save('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\fillers\\filler' + fillerNum + '.jpg')
+myScreenshot.save(yourDirectory + fillerNum + '.jpg')
 
 #open, crop screenshot
-filler = Image.open('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\fillers\\filler' + fillerNum + '.jpg')
+filler = Image.open(yourDirectory + fillerNum + '.jpg')
 
 #crop the map out of the screenshot
 #coordinates are in a box tuple of form (top-left x, top-left y, bottom-right x, bottom-right y)
@@ -155,7 +155,7 @@ img = Image.new('RGB',(920,609),(242,246,249))
 img.paste(copyCrop,(261,0))
 
 #save new image to fillers folder
-img.save('C:\\Users\\Vivek Rao\\Desktop\\IDS\\Digital\\Coronavirus\\fillers\\filler' + fillerNum + '.jpg')
+img.save(yourDirectory + fillerNum + '.jpg')
 
 #=============================================================================
 
@@ -166,6 +166,3 @@ indiana_deaths = latest_day['covid_deaths_cumsum'].sum()
 #The code below allows for entering time, date (see line #21) and number of cases/deaths formatted with commas
 pyperclip.copy('Editor\'s Note: This map will be updated as more information becomes available. This article and map were last updated at ' + time.strftime("%I:%M") + ' p.m. ' + date + ' to report an increase in the numbers of COVID-19 cases and deaths in the state. There are now at least ' + f"{indiana_cases:,d}" + ' cases of the coronavirus in Indiana and ' + f"{indiana_deaths:,d}" + ' deaths. Monroe County reported its first death from the coronavirus April 12.')
 toaster.show_toast("And we're done!", "Time to update CEO. Copy is on clipboard.", threaded=True)
-
-webbrowser.open('https://ids.ceo.getsnworks.com/ceo/content/287887e3-b314-49e9-af88-b8d707f3040f')
-webbrowser.open('https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6')
