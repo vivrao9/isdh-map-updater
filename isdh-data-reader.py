@@ -1,3 +1,7 @@
+###################################################################################################################
+##           EDIT: Indiana updated its data structure 08/24/20, hence this program is no longer valid.           ##
+###################################################################################################################
+
 import csv
 import requests
 from win10toast import ToastNotifier
